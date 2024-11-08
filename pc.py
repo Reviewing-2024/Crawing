@@ -54,10 +54,11 @@ while collected_count < target_count:
                 if collected_count < target_count:
                     title_text = title.text.strip()
                     url_href = url.get_attribute('href')
+                    img_src = img.get_attribute('src')
                     if title_text:  # 제목이 비어 있지 않을 때만 출력
                         print('-' * 50)
                         print(f"{collected_count + 1}. 강의 제목: {title_text}")
-                        print(f"   이미지 URL: {img.get_attribute('src')}")
+                        print(f"   이미지 URL: {img_src}")
                         print(f"   강의 링크: {url_href}")
                         collected_count += 1
 
