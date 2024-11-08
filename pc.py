@@ -7,13 +7,12 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import psycopg2
 
-conn = psycopg2.connect(
-    dbname = 'reviewing',
-    user = 'reviewing',
-    password = '1234',
-    host = 'localhost',
-    port = '5432'
-)
+dbname = 'reviewing'
+user = 'reviewing'
+password = '0623'
+host = 'localhost'
+port = '5432'
+conn = psycopg2.connect('host={0} dbname={1} user={2} password={3}'.format(host, dbname, user, password))
 
 cur = conn.cursor()
 
@@ -62,12 +61,12 @@ while collected_count < target_count:
                         print(f"   강의 링크: {url_href}")
                         collected_count += 1
 
-                        cur.execute("""
-                            INSERT INTO course (name, url, thumbnail_image, teacher)
-                            VALUES (%s, %s, %s);
-                        """, (title_text, url_href, img))
+                        cur.execute(
+                            "INSERT INTO course (name, url, thumbnail_image, teacher) VALUES (%s, %s, %s)", (title_text, url_href, img_src)
+                        )
                         
                         conn.commit()
+                        collected_count += 1
                 else:
                     break  # 원하는 개수에 도달하면 루프 종료
                 
