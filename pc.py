@@ -73,3 +73,10 @@ while collected_count < target_count:
     except Exception as e:
         print(f"오류 발생: {e}")
         break
+
+    finally:
+    # 데이터베이스 및 드라이버 종료
+        cur.close()
+        conn.close()
+        driver.quit()
+        print("작업 완료 및 연결 종료")
