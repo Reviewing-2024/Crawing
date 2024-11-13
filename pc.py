@@ -7,18 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import psycopg2
 
-dbname = 'reviewing'
-user = 'reviewing'
-password = '0623'
-host = 'localhost'
-port = '5432'
+
 
 conn = psycopg2.connect(
-        host=host,
-        dbname=dbname,
-        user=user,
-        password=password,
-        options='-c client_encoding=UTF8'
+        dbname = 'reviewing',
+        user = 'reviewing',
+        password = '1234',
+        host = 'localhost'
     )
 
 cur = conn.cursor()
@@ -66,10 +61,9 @@ while collected_count < target_count:
                         print(f"{collected_count + 1}. 강의 제목: {title_text}")
                         print(f"   이미지 URL: {img_src}")
                         print(f"   강의 링크: {url_href}")
-                        collected_count += 1
 
                         cur.execute(
-                            "INSERT INTO course (name, url, thumbnail_image, teacher) VALUES (%s, %s, %s)", (title_text, url_href, img_src)
+                            "INSERT INTO course (name, url, thumbnail_image) VALUES (%s, %s, %s)", (title_text, url_href, img_src)
                         )
                         
                         conn.commit()
