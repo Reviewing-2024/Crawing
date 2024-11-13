@@ -12,7 +12,14 @@ user = 'reviewing'
 password = '0623'
 host = 'localhost'
 port = '5432'
-conn = psycopg2.connect('host={0} dbname={1} user={2} password={3}'.format(host, dbname, user, password))
+
+conn = psycopg2.connect(
+        host=host,
+        dbname=dbname,
+        user=user,
+        password=password,
+        options='-c client_encoding=UTF8'
+    )
 
 cur = conn.cursor()
 
