@@ -3,6 +3,16 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import time
+import psycopg2
+
+conn = psycopg2.connect(
+        dbname = 'reviewing',
+        user = 'reviewing',
+        password = '1234',
+        host = 'localhost'
+    )
+
+cur = conn.cursor()
 
 # Chrome 옵션 설정 (헤드리스로 실행하려면)
 chrome_options = Options()
@@ -46,13 +56,23 @@ while collected_count < target_count:
                         print(f"{collected_count + 1}. 강의 제목: {title_text}")
                         print(f"   이미지 URL: {img_src}")
                         print(f"   강의 링크: {url_href}")
+                        
+                        cur.execute(
+                            "INSERT INTO course (name, url, thumbnail_image) VALUES (%s, %s, %s)", (title_text, url_href, img_src)
+                        )
+                        
+                        conn.commit()
                         collected_count += 1
                 else:
                     break  # 원하는 개수에 도달하면 루프 종료
-
+                
     except Exception as e:
         print(f"오류 발생: {e}")
         break
 
-# 드라이버 종료
-driver.quit()
+    finally:
+    # 데이터베이스 및 드라이버 종료
+        cur.close()
+        conn.close()
+        driver.quit()
+        print("작업 완료 및 연결 종료")
