@@ -51,16 +51,19 @@ try:
                         print('-' * 50)
                         print(f"{collected_count + 1}. 강의 제목: {title_text}")
                         print(f"   강의 링크: {url_href}")
+
+                        course_slug = url_href.split('/')[-1]
+
                         cur.execute("""
-                        INSERT INTO course (platform_id, category_id, title, url)
+                        INSERT INTO course (platform_id, category_id, title, url, slug)
                         VALUES (
                             (SELECT id FROM platform WHERE name = '코드잇'),
                             (SELECT c.id FROM category c 
                              INNER JOIN platform p ON p.id = c.platform_id 
                              WHERE p.name = '코드잇' AND c.slug = %s),
-                            %s, %s
+                            %s, %s, %s
                         );
-                        """, (slug, title_text, url_href))
+                        """, (slug, title_text, url_href, course_slug))
                         conn.commit()
                         collected_count += 1
                 else:
