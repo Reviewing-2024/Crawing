@@ -7,8 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import psycopg2
 
-
-
 conn = psycopg2.connect(
         dbname = 'reviewing',
         user = 'reviewing',
@@ -25,20 +23,18 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--ignore-certificate-errors")  # SSL 인증서 오류 무시
 
-# ChromeDriver 경로 설정 (chromedriver가 PATH에 있으면 경로 생략 가능)
-chrome_driver_path = 'C:\\Users\\82109\\crawling\\Crawling\\selenium\\Scripts\\chromedriver.exe' # 크롬 드라이버 경로
-
+chrome_driver_path = 'C:\\Users\\82109\\crawling\\Crawling\\selenium\\Scripts\\chromedriver.exe'
 service = Service(executable_path=chrome_driver_path)
-# 웹드라이버 실행
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-# FastCampus 카테고리 페이지로 이동
-driver.get('https://fastcampus.co.kr/category_online_programmingfront')
+slug = 'front'  # front, back, app, devops
+url = 'https://fastcampus.co.kr/category_online_programming{slug}'
+driver.get(url)
 
 # 페이지 로드 대기
 time.sleep(3)
 
-target_count = 10 # 가져올 강의 수
+target_count = 1 # 가져올 강의 수
 collected_count = 0  # 수집된 강의 수
 
 while collected_count < target_count:
@@ -62,9 +58,16 @@ while collected_count < target_count:
                         print(f"   이미지 URL: {img_src}")
                         print(f"   강의 링크: {url_href}")
 
-                        cur.execute(
-                            "INSERT INTO course (name, url, thumbnail_image) VALUES (%s, %s, %s)", (title_text, url_href, img_src)
-                        )
+                        cur.execute("""
+                        INSERT INTO course (platform_id, category_id, title, url, thumbnail_image)
+                        VALUES (
+                            (SELECT id FROM platform WHERE name = '패스트캠퍼스'),
+                            (SELECT c.id FROM category c 
+                             INNER JOIN platform p ON p.id = c.platform_id 
+                             WHERE p.name = '패스트캠퍼스' AND c.slug = %s),
+                            %s, %s, %s
+                        );
+                        """, (slug, title_text, url_href, img_src))
                         
                         conn.commit()
                         collected_count += 1
