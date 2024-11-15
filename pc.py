@@ -27,7 +27,7 @@ chrome_driver_path = 'C:\\Users\\82109\\crawling\\Crawling\\selenium\\Scripts\\c
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-slug = 'front'  # front, back, app, devops
+slug = 'app'  # front, back, app, devops
 url = f'https://fastcampus.co.kr/category_online_programming{slug}'
 driver.get(url)
 
@@ -57,17 +57,19 @@ while collected_count < target_count:
                         print(f"{collected_count + 1}. 강의 제목: {title_text}")
                         print(f"   이미지 URL: {img_src}")
                         print(f"   강의 링크: {url_href}")
+                    
+                        course_slug = url_href.split('/')[-1]
 
                         cur.execute("""
-                        INSERT INTO course (platform_id, category_id, title, url, thumbnail_image)
+                        INSERT INTO course (platform_id, category_id, title, url, thumbnail_image, slug)
                         VALUES (
                             (SELECT id FROM platform WHERE name = '패스트캠퍼스'),
                             (SELECT c.id FROM category c 
                              INNER JOIN platform p ON p.id = c.platform_id 
                              WHERE p.name = '패스트캠퍼스' AND c.slug = %s),
-                            %s, %s, %s
+                            %s, %s, %s, %s
                         );
-                        """, (slug, title_text, url_href, img_src))
+                        """, (slug, title_text, url_href, img_src, course_slug))
                         
                         conn.commit()
                         collected_count += 1
