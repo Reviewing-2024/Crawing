@@ -27,7 +27,7 @@ chrome_driver_path = 'C:\\Users\\82109\\crawling\\Crawling\\selenium\\Scripts\\c
 service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-slug = 'app'  # front, back, app, devops
+slug = ''  # front, back, app, devops
 url = f'https://fastcampus.co.kr/category_online_programming{slug}'
 driver.get(url)
 
