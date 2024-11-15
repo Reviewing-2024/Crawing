@@ -28,13 +28,13 @@ service = Service(executable_path=chrome_driver_path)
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 slug = 'front'  # front, back, app, devops
-url = 'https://fastcampus.co.kr/category_online_programming{slug}'
+url = f'https://fastcampus.co.kr/category_online_programming{slug}'
 driver.get(url)
 
 # 페이지 로드 대기
 time.sleep(3)
 
-target_count = 1 # 가져올 강의 수
+target_count = 10 # 가져올 강의 수
 collected_count = 0  # 수집된 강의 수
 
 while collected_count < target_count:
